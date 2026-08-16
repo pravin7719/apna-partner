@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Apna Partner</title>
 <style>
 body{margin:0;font-family:Arial;background:#f5f5f5}
@@ -13,10 +13,11 @@ input{width:100%;padding:13px;box-sizing:border-box;border:1px solid #ddd;border
 .card{background:white;border-radius:10px;padding:12px;box-shadow:0 2px 6px #ddd}
 .card img{width:100%;height:120px;object-fit:contain}
 .price{font-size:19px;font-weight:bold;margin:8px 0}
-button{background:#2874f0;color:white;border:0;padding:10px;width:100%;border-radius:6px}
-#cart{background:white;margin:12px;padding:15px;border-radius:10px}
-.cartitem{padding:8px 0;border-bottom:1px solid #ddd}
-.remove{background:#e53935;width:auto;padding:6px 10px}
+button{background:#2874f0;color:white;border:0;padding:10px;border-radius:6px;width:100%;margin-top:5px}
+#details,#cart{background:white;margin:12px;padding:15px;border-radius:10px}
+#details{display:none}
+.remove{background:#e53935;width:auto}
+.buy{background:#ff9800}
 </style>
 </head>
 
@@ -25,53 +26,76 @@ button{background:#2874f0;color:white;border:0;padding:10px;width:100%;border-ra
 <header>🛍️ Apna Partner</header>
 
 <div class="search">
-<input type="text" placeholder="Product search karo...">
+<input id="search" onkeyup="searchProduct()" placeholder="Product search karo...">
 </div>
 
-<div class="products">
+<div id="products" class="products">
 
-<div class="card">
+<div class="card" data-name="Smart Watch">
 <img src="https://via.placeholder.com/200">
 <h3>Smart Watch</h3>
 <div class="price">₹999</div>
-<button onclick="add('Smart Watch',999)">🛒 Cart me Add</button>
+<button onclick="details('Smart Watch',999)">View Details</button>
 </div>
 
-<div class="card">
+<div class="card" data-name="Wireless Earbuds">
 <img src="https://via.placeholder.com/200">
 <h3>Wireless Earbuds</h3>
 <div class="price">₹799</div>
-<button onclick="add('Wireless Earbuds',799)">🛒 Cart me Add</button>
+<button onclick="details('Wireless Earbuds',799)">View Details</button>
 </div>
 
-<div class="card">
+<div class="card" data-name="Men T-Shirt">
 <img src="https://via.placeholder.com/200">
 <h3>Men's T-Shirt</h3>
 <div class="price">₹499</div>
-<button onclick="add('Men T-Shirt',499)">🛒 Cart me Add</button>
+<button onclick="details('Men T-Shirt',499)">View Details</button>
 </div>
 
-<div class="card">
+<div class="card" data-name="Shoes">
 <img src="https://via.placeholder.com/200">
 <h3>Shoes</h3>
 <div class="price">₹1299</div>
-<button onclick="add('Shoes',1299)">🛒 Cart me Add</button>
+<button onclick="details('Shoes',1299)">View Details</button>
 </div>
 
+</div>
+
+<div id="details">
+<h2 id="dname"></h2>
+<h2 id="dprice"></h2>
+<p>यह एक अच्छा और भरोसेमंद प्रोडक्ट है।</p>
+<button onclick="addFromDetails()">🛒 Cart में Add</button>
+<button class="buy" onclick="buyNow()">⚡ Buy Now</button>
 </div>
 
 <div id="cart">
 <h2>🛒 Cart</h2>
-<div id="items">Cart khali hai</div>
+<div id="items">Cart खाली है</div>
 <h3 id="total">Total: ₹0</h3>
 </div>
 
 <script>
 let cart=[];
+let selectedName="";
+let selectedPrice=0;
 
-function add(name,price){
-cart.push({name,price});
+function details(name,price){
+selectedName=name;
+selectedPrice=price;
+document.getElementById("dname").innerText=name;
+document.getElementById("dprice").innerText="₹"+price;
+document.getElementById("details").style.display="block";
+window.scrollTo(0,document.getElementById("details").offsetTop);
+}
+
+function addFromDetails(){
+cart.push({name:selectedName,price:selectedPrice});
 showCart();
+}
+
+function buyNow(){
+alert("Buy Now चुना गया: "+selectedName+" — ₹"+selectedPrice);
 }
 
 function removeItem(i){
@@ -84,20 +108,26 @@ let items=document.getElementById("items");
 let total=0;
 
 if(cart.length===0){
-items.innerHTML="Cart khali hai";
+items.innerHTML="Cart खाली है";
 }else{
 items.innerHTML="";
 cart.forEach((item,i)=>{
 total+=item.price;
 items.innerHTML+=`
-<div class="cartitem">
+<div style="padding:8px 0;border-bottom:1px solid #ddd">
 ${item.name} — ₹${item.price}
 <button class="remove" onclick="removeItem(${i})">Remove</button>
 </div>`;
 });
 }
-
 document.getElementById("total").innerText="Total: ₹"+total;
+}
+
+function searchProduct(){
+let text=document.getElementById("search").value.toLowerCase();
+document.querySelectorAll(".card").forEach(card=>{
+card.style.display=card.dataset.name.toLowerCase().includes(text)?"block":"none";
+});
 }
 </script>
 
